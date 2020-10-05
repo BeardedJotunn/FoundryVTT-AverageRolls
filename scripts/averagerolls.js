@@ -87,6 +87,7 @@ function resetRolls() {
         plantFlag(userid, "lifetimeNat20", 0);
         console.log("AverageRolls - " + userid + " reset.");
     })
+}
 
 // Removes all flags
 function cleanUp() {
