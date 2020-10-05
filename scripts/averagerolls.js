@@ -33,7 +33,7 @@ Hooks.once("init", function () {
         type: Boolean,
         config: true,
         default: true,
-        onChange: () => {
+        onChange: s => {
             resetRolls()
         }
     });
