@@ -25,6 +25,16 @@ Hooks.once("init", function () {
         default: 30,
         config: true
     });
+
+    game.settings.register('averagerolls', "ResetRolls", {
+        name: "Reset Rolls",
+        hint: "Click to reset all rolls. No going back.",
+        scope: "world",
+        type: Object,
+        onChange: s => {
+            resetRolls()
+        }
+    });
 });
 
 Hooks.once("ready", function () { 
@@ -59,8 +69,12 @@ function resetRolls() {
         userid = user.id;
         plantFlag(userid, "sessionAverage", 0);
         plantFlag(userid, "sessionRolls", []);
+        plantFlag(userid, "sessionNat1", 0);
+        plantFlag(userid, "sessionNat20", 0);
         plantFlag(userid, "lifetimeAverage", 0);
         plantFlag(userid, "lifetimeRolls", 0);
+        plantFlag(userid, "lifetimeNat1", 0);
+        plantFlag(userid, "lifetimeNat20", 0);
         console.log("AverageRolls - " + userid + " reset.");
     })
 }
@@ -72,8 +86,12 @@ function cleanUp() {
         userid = user.id;
         plantFlag(userid, "sessionAverage", null);
         plantFlag(userid, "sessionRolls", null);
+        plantFlag(userid, "sessionNat1", null);
+        plantFlag(userid, "sessionNat20", null);
         plantFlag(userid, "lifetimeAverage", null);
         plantFlag(userid, "lifetimeRolls", null);
+        plantFlag(userid, "lifetimeNat1", null);
+        plantFlag(userid, "lifetimeNat20", null);
         if (user.isGM) {
             plantFlag(userid, "journalId", null);
         }
@@ -114,11 +132,40 @@ function outputAverages(userid = "") {
             msg = new ChatMessage();
             msg.user = user;
             msg.data.user = userid;
+            lifetimeNat20 = bringFlag(user, "lifetimeNat20");
+            lifetimeNat1 = bringFlag(user, "lifetimeNat1");
+            sessionNat20 = bringFlag(user, "sessionNat20");
+            sessionNat1 = bringFlag(user, "sessionNat1");
             sessAverage = bringFlag(userid, "sessionAverage");
             lifeAverage = bringFlag(userid, "lifetimeAverage");
             sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
             lifetimeAverage = Math.round((lifeAverage + Number.EPSILON) * 100) / 100;
-            msg.data.content = "Session average: " + sessionAverage + "<br>Lifetime average: " + lifetimeAverage;
+
+            msg.data.content += `<table style="height: 68px;" border="1">
+            <tbody>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;">&nbsp;</td>
+            <td style="height: 17px; width: 220px;"><strong>Session</strong></td>
+            <td style="height: 17px; width: 240px;"><strong>Lifetime</strong></td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Nat1</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionNat1}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeNat1}</td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Nat20</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionNat20}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeNat20}</td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Average</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionAverage}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeAverage}</td>
+            </tr>
+            </tbody>
+            </table>`;
+
             ChatMessage.create(msg);
         })
     }
@@ -148,7 +195,38 @@ function createJournal() {
         lifeAverage = bringFlag(userid, "lifetimeAverage");
         sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
         lifetimeAverage = Math.round((lifeAverage + Number.EPSILON) * 100) / 100;
-        content += "\n--------\n" + user.name + "\nSession Average: " + sessionAverage + "\nLifetime Average: " + lifetimeAverage;
+        sessionNat1 = bringFlag(userid, "sessionNat1");
+        sessionNat20 = bringFlag(userid, "sessionNat20");
+        lifetimeNat1 = bringFlag(userid, "lifetimeNat1");
+        lifetimeNat20 = bringFlag(userid, "lifetimeNat20");
+
+        content += `<h3 style="text-align: center;">&nbsp;</h3>
+            <h3 style="text-align: center;">${user.name}</h3>
+            <table style="height: 68px;" border="1">
+            <tbody>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;">&nbsp;</td>
+            <td style="height: 17px; width: 220px;"><strong>Session</strong></td>
+            <td style="height: 17px; width: 240px;"><strong>Lifetime</strong></td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Nat1</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionNat1}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeNat1}</td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Nat20</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionNat20}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeNat20}</td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Average</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionAverage}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeAverage}</td>
+            </tr>
+            </tbody>
+            </table>`;
+
         if (user.isGM) {
             plantFlag(userid, "journalId", entry.id);
         }
@@ -161,7 +239,7 @@ function createJournal() {
 function updateJournal() {
     entry = null;
     
-    content = "<p>AverageRolls</p>";
+    content = "";
     
     game.users.entries.forEach(user => {
         userid = user.id;
@@ -169,7 +247,38 @@ function updateJournal() {
         lifeAverage = bringFlag(userid, "lifetimeAverage");
         sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
         lifetimeAverage = Math.round((lifeAverage + Number.EPSILON) * 100) / 100;
-        content += "<p>--------</p><p>" + user.name + "<br>Session Average: " + sessionAverage + "<br>Lifetime Average: " + lifetimeAverage + "</p>";
+        sessionNat1 = bringFlag(userid, "sessionNat1");
+        sessionNat20 = bringFlag(userid, "sessionNat20");
+        lifetimeNat1 = bringFlag(userid, "lifetimeNat1");
+        lifetimeNat20 = bringFlag(userid, "lifetimeNat20");
+
+        content += `<h3 style="text-align: center;">&nbsp;</h3>
+            <h3 style="text-align: center;">${user.name}</h3>
+            <table style="height: 68px;" border="1">
+            <tbody>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;">&nbsp;</td>
+            <td style="height: 17px; width: 220px;"><strong>Session</strong></td>
+            <td style="height: 17px; width: 240px;"><strong>Lifetime</strong></td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Nat1</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionNat1}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeNat1}</td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Nat20</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionNat20}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeNat20}</td>
+            </tr>
+            <tr style="height: 17px;">
+            <td style="height: 17px; width: 234px;"><strong>Average</strong></td>
+            <td style="height: 17px; width: 220px;">${sessionAverage}</td>
+            <td style="height: 17px; width: 240px;">${lifetimeAverage}</td>
+            </tr>
+            </tbody>
+            </table>`;
+
         if (user.isGM) {
             entry = getJournal(bringFlag(user.id, "journalId"));
         }
@@ -234,13 +343,28 @@ Hooks.on("createChatMessage", (message, options, user) =>
     name = message.user.name;
     result = parseInt(message.roll.result.split(" ")[0]);
 
+    if (result == 20) {
+        lifetimeNat20 = bringFlag(user, "lifetimeNat20");
+        sessionNat20 = bringFlag(user, "sessionNat20");
+        newLifetimeNat20 = parseInt(lifetimeNat20) + 1;
+        newSessionNat20 = parseInt(sessionNat20) + 1;
+        plantFlag(user, "lifetimeNat20", newLifetimeNat20);
+        plantFlag(user, "sessionNat20", newSessionNat20);
+    } else if (result == 1) {
+        lifetimeNat1 = bringFlag(user, "lifetimeNat1");
+        sessionNat1 = bringFlag(user, "sessionNat1");
+        newLifetimeNat1 = parseInt(lifetimeNat1) + 1;
+        newSessionNat1 = parseInt(sessionNat1) + 1;
+        plantFlag(user, "lifetimeNat1", newLifetimeNat1);
+        plantFlag(user, "sessionNat1", newSessionNat1);
+    }
+
     sessionRolls = bringFlag(user, "sessionRolls");
     sessionRolls.push(result);
     plantFlag(user, "sessionRolls", sessionRolls);
     sessionSum = sessionRolls.reduce((a, b) => a + b, 0);
     sessionAverage = sessionSum/sessionRolls.length;
     plantFlag(user, "sessionAverage", sessionAverage);
-    console.log("AverageRolls - Session average for " + message.user.name + " is " + sessionAverage );
 
     
     lifetimeRolls = bringFlag(user, "lifetimeRolls");
@@ -249,7 +373,6 @@ Hooks.on("createChatMessage", (message, options, user) =>
     newAverage = ((lifetimeAverage * lifetimeRolls) + result) / (newRolls);
     plantFlag(user, "lifetimeRolls", newRolls);
     plantFlag(user, "lifetimeAverage", newAverage);
-    console.log("AverageRolls - Lifetime average for " + message.user.name + " is " + newAverage );
     
     if (game.settings.get("averagerolls", "JournalEntry")) {
         time = parseInt(game.settings.get("averagerolls", "UpdateFrequency")) * 1000;
