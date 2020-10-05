@@ -1,11 +1,11 @@
 {
     "name": "averagerolls",
     "title": "AverageRolls",
-    "description": "",
+    "description": "Foundry module to get session and lifetime average D20 rolls per user.",
     "author": "BeardedJotunn",
-    "version": "0.8.2",
+    "version": "0.9.0",
     "minimumCoreVersion": "0.6.6",
-    "compatibleCoreVersion": "0.6.6",
+    "compatibleCoreVersion": "0.7.2",
     "scripts": [
         "scripts/averagerolls.js"
     ],

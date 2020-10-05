@@ -7,12 +7,22 @@ Hooks.once("init", function () {
         default: true,
         config: true
     });
+
     game.settings.register('averagerolls', "JournalEntry", {
         name: "Create Journal Entry",
         hint: "Enable this to create a journal entry with average rolls.",
         scope: "world",
         type: Boolean,
         default: true,
+        config: true
+    });
+
+    game.settings.register('averagerolls', "UpdateFrequency", {
+        name: "Update Frequency",
+        hint: "How often in seconds you want the journal entry to update, does nothing if create journal entry isn't enabled.",
+        scope: "world",
+        type: Number,
+        default: 30,
         config: true
     });
 });
@@ -25,7 +35,7 @@ Hooks.once("ready", function () {
 
 // Adding flags for rolls and average to all users
 function startUp() {
-    console.log("Resetting session rolls");
+    console.log("AverageRolls - Resetting session rolls");
     game.users.entries.forEach(user => {
         userid = user.id;
         plantFlag(userid, "sessionAverage", 0);
@@ -36,7 +46,7 @@ function startUp() {
         if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
             plantFlag(userid, "lifetimeRolls", 0);
         }
-        console.log(userid + " reset for session.");
+        console.log("AverageRolls - " + userid + " reset for session.");
     })
     if (game.settings.get("averagerolls", "JournalEntry")) {
         updateJournal();
@@ -44,20 +54,20 @@ function startUp() {
 }
  // Resets all flags
 function resetRolls() {
-    console.log("Resetting all rolls");
+    console.log("AverageRolls - Resetting all rolls");
     game.users.entries.forEach(user => {
         userid = user.id;
         plantFlag(userid, "sessionAverage", 0);
         plantFlag(userid, "sessionRolls", []);
         plantFlag(userid, "lifetimeAverage", 0);
         plantFlag(userid, "lifetimeRolls", 0);
-        console.log(userid + " reset.");
+        console.log("AverageRolls - " + userid + " reset.");
     })
 }
 
 // Sets all flags used to null
 function cleanUp() {
-    console.log("Cleaning up all users");
+    console.log("AverageRolls - Cleaning up all users");
     game.users.entries.forEach(user => {
         userid = user.id;
         plantFlag(userid, "sessionAverage", null);
@@ -67,7 +77,7 @@ function cleanUp() {
         if (user.isGM) {
             plantFlag(userid, "journalId", null);
         }
-        console.log(userid + " cleaned up.");
+        console.log("AverageRolls - " + userid + " cleaned up.");
     })
 }
 
@@ -75,7 +85,7 @@ function cleanUp() {
 function bringFlag(userid, flag) {
     get = game.users.get(userid).getFlag("averagerolls", flag)
     if (typeof get == "undefined") {
-        console.log("Couldn't find flag");
+        console.log("AverageRolls - Couldn't find flag " + flag) + " on user " + userid;
     }
     return get;
 }
@@ -118,7 +128,6 @@ function createJournal() {
     gm = "";
     gmFound = false;
     game.users.entries.some(function(user, index) {
-        console.log(user);
         if (user.isGM) {
             gm = user;
             gmFound = true;
@@ -153,6 +162,7 @@ function updateJournal() {
     entry = null;
     
     content = "<p>AverageRolls</p>";
+    
     game.users.entries.forEach(user => {
         userid = user.id;
         sessAverage = bringFlag(userid, "sessionAverage");
@@ -168,9 +178,9 @@ function updateJournal() {
     if (typeof entry == "undefined" || entry == null) {
         return createJournal();
     }
-    console.log(entry)
+
     entry.data.content = content;
-    return JournalEntry.update(entry);
+    return entry.update(entry.data);
 }
 
 function findJournal() {
@@ -189,7 +199,7 @@ function findJournal() {
         }
     })
     if (journalEntry == null) {
-        console.log("Couldn't find Journal Entry.");
+        console.log("AverageRolls - Couldn't find journal entry. Creating one.");
     }
     return journalEntry;
 }
@@ -197,10 +207,21 @@ function findJournal() {
 function getJournal(journalId) {
     entry = game.journal.get(journalId);
     if (typeof entry == "undefined" || entry == null) {
-        console.log("Journal not found, looking through all journals.")
+        console.log("AverageRolls - Journal not found, looking through all journals.")
         return findJournal();
     }
     return entry;
+}
+
+class timeOut {
+    constructor(fn, interval) {
+        var id = setTimeout(fn, interval);
+        this.cleared = false;
+        this.clear = function () {
+            this.cleared = true;
+            clearTimeout(id);
+        };
+    }
 }
 
 
@@ -219,7 +240,7 @@ Hooks.on("createChatMessage", (message, options, user) =>
     sessionSum = sessionRolls.reduce((a, b) => a + b, 0);
     sessionAverage = sessionSum/sessionRolls.length;
     plantFlag(user, "sessionAverage", sessionAverage);
-    console.log("Session average for " + message.user.name + " is " + sessionAverage );
+    console.log("AverageRolls - Session average for " + message.user.name + " is " + sessionAverage );
 
     
     lifetimeRolls = bringFlag(user, "lifetimeRolls");
@@ -228,10 +249,16 @@ Hooks.on("createChatMessage", (message, options, user) =>
     newAverage = ((lifetimeAverage * lifetimeRolls) + result) / (newRolls);
     plantFlag(user, "lifetimeRolls", newRolls);
     plantFlag(user, "lifetimeAverage", newAverage);
-    console.log("Lifetime average for " + message.user.name + " is " + newAverage );
-
+    console.log("AverageRolls - Lifetime average for " + message.user.name + " is " + newAverage );
+    
     if (game.settings.get("averagerolls", "JournalEntry")) {
-        console.log("Updating Average Rolls Journal Entry.")
-        updateJournal();
+        time = parseInt(game.settings.get("averagerolls", "UpdateFrequency")) * 1000;
+        if (typeof timer == "undefined" || timer.cleared) {
+            timer = new timeOut(function () {
+                console.log("AverageRolls - Updating Average Rolls Journal Entry.")
+                updateJournal();
+                timer.clear();
+            }, time);
+        }
     }
 });
