@@ -128,17 +128,17 @@ function unPlantFlag(userid, flag) {
     return game.users.get(userid).unSetFlag("averagerolls", flag)
 }
 
-// Output session average for all users as a chat message
+// Output stats for all users as a chat message
 function outputAverages(userid = "") {
     if (!userid == "") {
         user = game.users.get(userid);
         msg = new ChatMessage();
         msg.user = user;
         msg.data.user = userid;
-        lifetimeNat20 = bringFlag(user, "lifetimeNat20");
-        lifetimeNat1 = bringFlag(user, "lifetimeNat1");
-        sessionNat20 = bringFlag(user, "sessionNat20");
-        sessionNat1 = bringFlag(user, "sessionNat1");
+        lifetimeNat20 = bringFlag(userid, "lifetimeNat20");
+        lifetimeNat1 = bringFlag(userid, "lifetimeNat1");
+        sessionNat20 = bringFlag(userid, "sessionNat20");
+        sessionNat1 = bringFlag(userid, "sessionNat1");
         sessAverage = bringFlag(userid, "sessionAverage");
         lifeAverage = bringFlag(userid, "lifetimeAverage");
         sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
@@ -176,10 +176,10 @@ function outputAverages(userid = "") {
             msg = new ChatMessage();
             msg.user = user;
             msg.data.user = userid;
-            lifetimeNat20 = bringFlag(user, "lifetimeNat20");
-            lifetimeNat1 = bringFlag(user, "lifetimeNat1");
-            sessionNat20 = bringFlag(user, "sessionNat20");
-            sessionNat1 = bringFlag(user, "sessionNat1");
+            lifetimeNat20 = bringFlag(userid, "lifetimeNat20");
+            lifetimeNat1 = bringFlag(userid, "lifetimeNat1");
+            sessionNat20 = bringFlag(userid, "sessionNat20");
+            sessionNat1 = bringFlag(userid, "sessionNat1");
             sessAverage = bringFlag(userid, "sessionAverage");
             lifeAverage = bringFlag(userid, "lifetimeAverage");
             sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
@@ -215,6 +215,7 @@ function outputAverages(userid = "") {
     }
 }
 
+// Create a journal entry with stats
 function createJournal() {
     gm = "";
     gmFound = false;
@@ -280,6 +281,7 @@ function createJournal() {
     return JournalEntry.create(entry);
 }
 
+// Update the journal entry with stats
 function updateJournal() {
     entry = null;
     
@@ -336,6 +338,7 @@ function updateJournal() {
     return entry.update(entry.data);
 }
 
+// Search through all journal entries to find the one named Average Rolls
 function findJournal() {
     gmFound = false;
     journalEntry = null;
@@ -357,6 +360,7 @@ function findJournal() {
     return journalEntry;
 }
 
+// Get journal entry by id, if it isn't found use findJournal to search for it
 function getJournal(journalId) {
     entry = game.journal.get(journalId);
     if (typeof entry == "undefined" || entry == null) {
@@ -366,6 +370,7 @@ function getJournal(journalId) {
     return entry;
 }
 
+// Class for updating journal entry on a timer
 class timeOut {
     constructor(fn, interval) {
         var id = setTimeout(fn, interval);
@@ -378,7 +383,7 @@ class timeOut {
 }
 
 
-// Hooks the chat message and if it's a D20 roll adds it to the roll flag and calculates averages for user that sent it.
+// Hooks the chat message and if it's a D20 roll adds it to the roll flag and calculates averages for user that sent it
 Hooks.on("createChatMessage", (message, options, user) => 
 {
     if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !message.roll.dice[0].faces == 20) {
