@@ -28,10 +28,11 @@ Hooks.once("init", function () {
 
     game.settings.register('averagerolls', "ResetRolls", {
         name: "Reset Rolls",
-        hint: "Click to reset all rolls. No going back.",
+        hint: "Tick or untick to reset all rolls. No going back.",
         scope: "world",
-        type: Object,
+        type: Boolean,
         config: true,
+        default: true,
         onChange: () => {
             resetRolls()
         }
@@ -166,7 +167,7 @@ function outputAverages(userid = "") {
         </tr>
         </tbody>
         </table>`;
-        
+
         ChatMessage.create(msg);
     } else {
         game.users.entries.forEach(user => {
