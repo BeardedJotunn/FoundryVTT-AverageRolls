@@ -31,6 +31,7 @@ Hooks.once("init", function () {
         hint: "Click to reset all rolls. No going back.",
         scope: "world",
         type: Object,
+        config: true,
         onChange: s => {
             resetRolls()
         }
@@ -50,8 +51,16 @@ function startUp() {
         userid = user.id;
         plantFlag(userid, "sessionAverage", 0);
         plantFlag(userid, "sessionRolls", []);
+        plantFlag(userid, "sessionNat1", 0);
+        plantFlag(userid, "sessionNat20", 0);
         if (typeof bringFlag(userid, "lifetimeAverage") == "undefined") {
             plantFlag(userid, "lifetimeAverage", []);
+        }
+        if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
+            plantFlag(userid, "lifetimeRolls", 0);
+        }
+        if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
+            plantFlag(userid, "lifetimeRolls", 0);
         }
         if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
             plantFlag(userid, "lifetimeRolls", 0);
@@ -79,21 +88,21 @@ function resetRolls() {
     })
 }
 
-// Sets all flags used to null
+// Removes all flags
 function cleanUp() {
     console.log("AverageRolls - Cleaning up all users");
     game.users.entries.forEach(user => {
         userid = user.id;
-        plantFlag(userid, "sessionAverage", null);
-        plantFlag(userid, "sessionRolls", null);
-        plantFlag(userid, "sessionNat1", null);
-        plantFlag(userid, "sessionNat20", null);
-        plantFlag(userid, "lifetimeAverage", null);
-        plantFlag(userid, "lifetimeRolls", null);
-        plantFlag(userid, "lifetimeNat1", null);
-        plantFlag(userid, "lifetimeNat20", null);
+        unPlantFlag(userid, "sessionAverage");
+        unPlantFlag(userid, "sessionRolls");
+        unPlantFlag(userid, "sessionNat1");
+        unPlantFlag(userid, "sessionNat20");
+        unPlantFlag(userid, "lifetimeAverage");
+        unPlantFlag(userid, "lifetimeRolls");
+        unPlantFlag(userid, "lifetimeNat1");
+        unPlantFlag(userid, "lifetimeNat20");
         if (user.isGM) {
-            plantFlag(userid, "journalId", null);
+            unPlantFlag(userid, "journalId");
         }
         console.log("AverageRolls - " + userid + " cleaned up.");
     })
@@ -111,6 +120,11 @@ function bringFlag(userid, flag) {
 // Set specified flag for userid
 function plantFlag(userid, flag, value) {
     return game.users.get(userid).setFlag("averagerolls", flag, value)
+}
+
+// Remove specified flag for userid
+function unPlantFlag(userid, flag) {
+    return game.users.get(userid).unSetFlag("averagerolls", flag)
 }
 
 // Output session average for all users as a chat message
