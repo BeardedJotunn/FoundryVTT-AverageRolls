@@ -25,7 +25,7 @@ Hooks.once("init", function () {
         default: 30,
         config: true
     });
-
+/*
     game.settings.register('averagerolls', "ResetRolls", {
         name: "Reset Rolls",
         hint: "Tick or untick to reset all rolls. No going back.",
@@ -33,10 +33,10 @@ Hooks.once("init", function () {
         type: Boolean,
         config: true,
         default: true,
-        onChange: s => {
+        onChange: () => {
             resetRolls()
         }
-    });
+    });*/
 });
 
 Hooks.once("ready", function () { 
@@ -144,7 +144,7 @@ function outputAverages(userid = "") {
         sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
         lifetimeAverage = Math.round((lifeAverage + Number.EPSILON) * 100) / 100;
 
-        msg.data.content += `<table style="height: 68px;" border="1">
+        msg.data.content = `<table style="height: 68px;" border="1">
         <tbody>
         <tr style="height: 17px;">
         <td style="height: 17px; width: 234px;">&nbsp;</td>
@@ -185,7 +185,7 @@ function outputAverages(userid = "") {
             sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
             lifetimeAverage = Math.round((lifeAverage + Number.EPSILON) * 100) / 100;
 
-            msg.data.content += `<table style="height: 68px;" border="1">
+            msg.data.content = `<table style="height: 68px;" border="1">
             <tbody>
             <tr style="height: 17px;">
             <td style="height: 17px; width: 234px;">&nbsp;</td>

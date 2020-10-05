@@ -11,8 +11,5 @@ A module to display dice rolling stats in Foundry. Shows lifetime and session av
 ## Future Plans:
  - ~~Add lifetime averages.~~ Added, waiting to see how it works long term.
  - ~~Better way to display averages.~~ Added.
- - Nat1 and Nat20 counter.
+ - ~~Nat1 and Nat20 counter.~~ Added.
  - More tracking options.
- - Perhaps some Discord connection. 
-
-Was originally going to be a Discord Bot module which is why I forked DiscordBridge by nearlyNonexistent. However I ended up quickly diverging from that but maybe it will return one day.
