@@ -32,7 +32,7 @@ Hooks.once("init", function () {
         scope: "world",
         type: Object,
         config: true,
-        onChange: s => {
+        onChange: () => {
             resetRolls()
         }
     });
@@ -86,7 +86,6 @@ function resetRolls() {
         plantFlag(userid, "lifetimeNat20", 0);
         console.log("AverageRolls - " + userid + " reset.");
     })
-}
 
 // Removes all flags
 function cleanUp() {
@@ -134,11 +133,40 @@ function outputAverages(userid = "") {
         msg = new ChatMessage();
         msg.user = user;
         msg.data.user = userid;
+        lifetimeNat20 = bringFlag(user, "lifetimeNat20");
+        lifetimeNat1 = bringFlag(user, "lifetimeNat1");
+        sessionNat20 = bringFlag(user, "sessionNat20");
+        sessionNat1 = bringFlag(user, "sessionNat1");
         sessAverage = bringFlag(userid, "sessionAverage");
         lifeAverage = bringFlag(userid, "lifetimeAverage");
         sessionAverage = Math.round((sessAverage + Number.EPSILON) * 100) / 100;
         lifetimeAverage = Math.round((lifeAverage + Number.EPSILON) * 100) / 100;
-        msg.data.content = "Session average: " + sessionAverage + "<br>Lifetime average: " + lifetimeAverage;
+
+        msg.data.content += `<table style="height: 68px;" border="1">
+        <tbody>
+        <tr style="height: 17px;">
+        <td style="height: 17px; width: 234px;">&nbsp;</td>
+        <td style="height: 17px; width: 220px;"><strong>Session</strong></td>
+        <td style="height: 17px; width: 240px;"><strong>Lifetime</strong></td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="height: 17px; width: 234px;"><strong>Nat1</strong></td>
+        <td style="height: 17px; width: 220px;">${sessionNat1}</td>
+        <td style="height: 17px; width: 240px;">${lifetimeNat1}</td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="height: 17px; width: 234px;"><strong>Nat20</strong></td>
+        <td style="height: 17px; width: 220px;">${sessionNat20}</td>
+        <td style="height: 17px; width: 240px;">${lifetimeNat20}</td>
+        </tr>
+        <tr style="height: 17px;">
+        <td style="height: 17px; width: 234px;"><strong>Average</strong></td>
+        <td style="height: 17px; width: 220px;">${sessionAverage}</td>
+        <td style="height: 17px; width: 240px;">${lifetimeAverage}</td>
+        </tr>
+        </tbody>
+        </table>`;
+        
         ChatMessage.create(msg);
     } else {
         game.users.entries.forEach(user => {
