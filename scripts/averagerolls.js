@@ -393,6 +393,7 @@ Hooks.on("createChatMessage", (message, options, user) =>
     }
 
     console.log("roll found " + message.roll.dice[0].faces)
+    console.log ("d20 roll : " + message.roll.dice[0].faces == 20)
     console.log(message);
     rolls = []
     nat20s = 0;
