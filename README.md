@@ -7,7 +7,7 @@ A module to display dice rolling stats in Foundry. Shows lifetime and session av
  - Install, activate and make sure it is enabled in settings, if it isn't enabled restart Foundry after enabling it. You can use https://raw.githubusercontent.com/BeardedJotunn/FoundryVTT-AverageRolls/master/module.json for manual install.
  - If enabled a Journal Entry called "Average Rolls" will be created where you can see everyone's stats updated at a set frequency.
  - Make a macro with the following script or run it in the console if to send chat messages with player stats: outputAverages();
- - To reset all rolls ake a macro with the following script or run it in the console, cannot be undone: resetRolls();
+ - To reset all rolls make a macro with the following script or run it in the console, cannot be undone: resetRolls();
 
 ## Future Plans:
  - ~~Add lifetime averages.~~ Added, waiting to see how it works long term.
