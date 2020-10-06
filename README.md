@@ -15,3 +15,6 @@ A module to display dice rolling stats in Foundry. Shows lifetime and session av
  - ~~Nat1 and Nat20 counter.~~ Added.
  - Setting to reset rolls.
  - More tracking and dice options.
+
+## Support
+- If you want to support me to continue updating this module, working on new ones and hopefully creating a game system for Foundry you can do so at https://paypal.me/beardedjotunn
