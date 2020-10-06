@@ -392,24 +392,29 @@ Hooks.on("createChatMessage", (message, options, user) =>
     }
 
     rolls = []
+    nat20s = 0;
+    nat1s = 0;
+    lifetimeNat20 = 0;
+    lifetimeNat1 = 0;
+    sessionNat20 = 0;
+    sessionNat1 = 0;
+
     message.roll.dice[0].rolls.forEach(diceRoll => {
         roll = diceRoll.roll;
         rolls.push(parseInt(roll));
-        
+
         if (roll == 20) {
-            lifetimeNat20 = bringFlag(user, "lifetimeNat20");
-            sessionNat20 = bringFlag(user, "sessionNat20");
-            newLifetimeNat20 = parseInt(lifetimeNat20) + 1;
-            newSessionNat20 = parseInt(sessionNat20) + 1;
-            plantFlag(user, "lifetimeNat20", newLifetimeNat20);
-            plantFlag(user, "sessionNat20", newSessionNat20);
+            if (lifetimeNat20 == 0 || sessionNat20 == 0) {
+                lifetimeNat20 = parseInt(bringFlag(user, "lifetimeNat20"));
+                sessionNat20 = parseInt(bringFlag(user, "sessionNat20"));
+            }
+            nat20s++;
         } else if (roll == 1) {
-            lifetimeNat1 = bringFlag(user, "lifetimeNat1");
-            sessionNat1 = bringFlag(user, "sessionNat1");
-            newLifetimeNat1 = parseInt(lifetimeNat1) + 1;
-            newSessionNat1 = parseInt(sessionNat1) + 1;
-            plantFlag(user, "lifetimeNat1", newLifetimeNat1);
-            plantFlag(user, "sessionNat1", newSessionNat1);
+            if (lifetimeNat1 == 0 || sessionNat1 == 0) {
+                lifetimeNat1 = parseInt(bringFlag(user, "lifetimeNat1"));
+                sessionNat1 = parseInt(bringFlag(user, "sessionNat1"));
+            }
+            nat1s++;
         }
     }); 
     console.log(rolls);
@@ -431,6 +436,22 @@ Hooks.on("createChatMessage", (message, options, user) =>
     newAverage = ((lifetimeAverage * lifetimeRolls) + result) / (newRolls);
     plantFlag(user, "lifetimeRolls", newRolls);
     plantFlag(user, "lifetimeAverage", newAverage);
+
+    if (nat20s > 0) {
+        newLifetimeNat20 = lifetimeNat20 + nat20s;
+        newSessionNat20 = sessionNat20 + nat20s;
+        plantFlag(user, "lifetimeNat20", newLifetimeNat20);
+        plantFlag(user, "sessionNat20", newSessionNat20);
+
+    }
+
+    if (nat1s > 0) {
+        newLifetimeNat1 = lifetimeNat1 + nat1s;
+        newSessionNat1 = sessionNat1 + nat1s;
+        plantFlag(user, "lifetimeNat1", newLifetimeNat1);
+        plantFlag(user, "sessionNat1", newSessionNat1);
+    }
+    
     
     if (game.settings.get("averagerolls", "JournalEntry")) {
         time = parseInt(game.settings.get("averagerolls", "UpdateFrequency")) * 1000;
