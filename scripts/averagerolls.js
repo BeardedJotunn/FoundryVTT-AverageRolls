@@ -387,12 +387,9 @@ class timeOut {
 Hooks.on("createChatMessage", (message, options, user) => 
 {
     if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !(parseInt(message.roll.dice[0].faces) == 20)) {
-        console.log("not a d20 roll")
         return;
     }
 
-    console.log("roll found " + parseInt(message.roll.dice[0].faces))
-    
     rolls = []
     nat20s = 0;
     nat1s = 0;

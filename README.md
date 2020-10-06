@@ -11,7 +11,7 @@ A module to display dice rolling stats in Foundry. Shows lifetime and session av
 
 ## Future Plans:
  - ~~Add lifetime averages.~~ Added, waiting to see how it works long term.
- - ~~Better way to display averages.~~ Added.
+ - ~~Better way to display averages.~~ Added journal entry.
  - ~~Nat1 and Nat20 counter.~~ Added.
  - Setting to reset rolls.
  - More tracking options.
