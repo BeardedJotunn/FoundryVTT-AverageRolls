@@ -386,41 +386,48 @@ class timeOut {
 // Hooks the chat message and if it's a D20 roll adds it to the roll flag and calculates averages for user that sent it
 Hooks.on("createChatMessage", (message, options, user) => 
 {
-    console.log(message);
-    /*
+    
     if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !message.roll.dice[0].faces == 20) {
         return;
     }
+
+    rolls = []
+    message.roll.dice[0].rolls.forEach(diceRoll => {
+        roll = diceRoll.roll;
+        rolls.push(parseInt(roll));
+        
+        if (roll == 20) {
+            lifetimeNat20 = bringFlag(user, "lifetimeNat20");
+            sessionNat20 = bringFlag(user, "sessionNat20");
+            newLifetimeNat20 = parseInt(lifetimeNat20) + 1;
+            newSessionNat20 = parseInt(sessionNat20) + 1;
+            plantFlag(user, "lifetimeNat20", newLifetimeNat20);
+            plantFlag(user, "sessionNat20", newSessionNat20);
+        } else if (roll == 1) {
+            lifetimeNat1 = bringFlag(user, "lifetimeNat1");
+            sessionNat1 = bringFlag(user, "sessionNat1");
+            newLifetimeNat1 = parseInt(lifetimeNat1) + 1;
+            newSessionNat1 = parseInt(sessionNat1) + 1;
+            plantFlag(user, "lifetimeNat1", newLifetimeNat1);
+            plantFlag(user, "sessionNat1", newSessionNat1);
+        }
+    }); 
+    console.log(rolls);
     name = message.user.name;
-    result = parseInt(message.roll.result.split(" ")[0]);
 
-    if (result == 20) {
-        lifetimeNat20 = bringFlag(user, "lifetimeNat20");
-        sessionNat20 = bringFlag(user, "sessionNat20");
-        newLifetimeNat20 = parseInt(lifetimeNat20) + 1;
-        newSessionNat20 = parseInt(sessionNat20) + 1;
-        plantFlag(user, "lifetimeNat20", newLifetimeNat20);
-        plantFlag(user, "sessionNat20", newSessionNat20);
-    } else if (result == 1) {
-        lifetimeNat1 = bringFlag(user, "lifetimeNat1");
-        sessionNat1 = bringFlag(user, "sessionNat1");
-        newLifetimeNat1 = parseInt(lifetimeNat1) + 1;
-        newSessionNat1 = parseInt(sessionNat1) + 1;
-        plantFlag(user, "lifetimeNat1", newLifetimeNat1);
-        plantFlag(user, "sessionNat1", newSessionNat1);
-    }
 
-    sessionRolls = bringFlag(user, "sessionRolls");
-    sessionRolls.push(result);
+
+    oldSessionRolls = bringFlag(user, "sessionRolls");
+    sessionRolls = oldSessionRolls.concat(rolls);
     plantFlag(user, "sessionRolls", sessionRolls);
     sessionSum = sessionRolls.reduce((a, b) => a + b, 0);
     sessionAverage = sessionSum/sessionRolls.length;
     plantFlag(user, "sessionAverage", sessionAverage);
 
-    
+    result = rolls.reduce((a, b) => a + b, 0);
     lifetimeRolls = bringFlag(user, "lifetimeRolls");
     lifetimeAverage = bringFlag(user, "lifetimeAverage");
-    newRolls = parseInt(lifetimeRolls) + 1;
+    newRolls = parseInt(lifetimeRolls) + rolls.length;
     newAverage = ((lifetimeAverage * lifetimeRolls) + result) / (newRolls);
     plantFlag(user, "lifetimeRolls", newRolls);
     plantFlag(user, "lifetimeAverage", newAverage);
@@ -435,5 +442,4 @@ Hooks.on("createChatMessage", (message, options, user) =>
             }, time);
         }
     }
-    */
 });
