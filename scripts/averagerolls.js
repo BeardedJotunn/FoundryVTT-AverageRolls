@@ -387,7 +387,7 @@ class timeOut {
 Hooks.on("createChatMessage", (message, options, user) => 
 {
     
-    if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !parseInt(message.roll.dice[0].faces == 20)) {
+    if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !message.roll.dice[0].faces == 20) {
         return;
     }
 
