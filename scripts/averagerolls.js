@@ -25,7 +25,7 @@ Hooks.once("init", function () {
         default: 30,
         config: true
     });
-
+    /*
     game.settings.register('averagerolls', "ResetRolls", {
         name: "Reset Rolls",
         hint: "Tick or untick to reset all rolls. No going back.",
@@ -36,7 +36,7 @@ Hooks.once("init", function () {
         onChange: () => {
             resetRolls()
         }
-    });
+    });*/
 });
 
 Hooks.once("ready", function () { 
