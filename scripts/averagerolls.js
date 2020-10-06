@@ -386,8 +386,7 @@ class timeOut {
 // Hooks the chat message and if it's a D20 roll adds it to the roll flag and calculates averages for user that sent it
 Hooks.on("createChatMessage", (message, options, user) => 
 {
-    
-    if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !message.roll.dice[0].faces == 20) {
+    if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !(parseInt(message.roll.dice[0].faces) == 20)) {
         return;
     }
 
@@ -417,7 +416,6 @@ Hooks.on("createChatMessage", (message, options, user) =>
             nat1s++;
         }
     }); 
-    console.log(rolls);
     name = message.user.name;
 
 

@@ -1,9 +1,9 @@
 {
     "name": "averagerolls",
     "title": "AverageRolls",
-    "description": "Foundry module to get session and lifetime average D20 rolls per user.",
+    "description": "Foundry module to get session and lifetime average D20 rolls per user as well as amount of Nat1s and Nat20s.",
     "author": "BeardedJotunn",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "minimumCoreVersion": "0.6.6",
     "compatibleCoreVersion": "0.7.2",
     "scripts": [
