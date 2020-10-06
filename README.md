@@ -1,7 +1,7 @@
 # Average Rolls
 ###### A module for Foundry VTT.
 
-A module to display dice rolling stats in Foundry. Shows lifetime and session averages, Nat1's and Nat20's per user. Only saves the used die in disadvantage/advantage rolls. Currently only uses the first dice in a roll, as that is what's needed for 5e, so to make it work the first dice rolled has to be the D20. Could be changed to track all D20 rolls or a setting could be added to choose what dice to track if requested.
+A module to display dice rolling stats in Foundry. Shows lifetime and session averages, Nat1's and Nat20's per user. Currently only uses the first dice in a roll, as that is what's needed for 5e, so to make it work the first dice rolled has to be the D20. Could be changed to track all D20 rolls or a setting could be added to choose what dice to track if requested.
 
 ## How to:
  - Install, activate and make sure it is enabled in settings, if it isn't enabled restart Foundry after enabling it. You can use https://raw.githubusercontent.com/BeardedJotunn/FoundryVTT-AverageRolls/master/module.json for manual installation.
