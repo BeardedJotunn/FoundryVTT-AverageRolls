@@ -25,7 +25,7 @@ Hooks.once("init", function () {
         default: 30,
         config: true
     });
-    /*
+    
     game.settings.register('averagerolls', "ResetRolls", {
         name: "Reset Rolls",
         hint: "Tick or untick to reset all rolls. No going back.",
@@ -36,7 +36,7 @@ Hooks.once("init", function () {
         onChange: () => {
             resetRolls()
         }
-    });*/
+    });
 });
 
 Hooks.once("ready", function () { 
@@ -386,6 +386,8 @@ class timeOut {
 // Hooks the chat message and if it's a D20 roll adds it to the roll flag and calculates averages for user that sent it
 Hooks.on("createChatMessage", (message, options, user) => 
 {
+    console.log(message);
+    /*
     if (!game.settings.get("averagerolls", "Enabled") || !message.isRoll || !message.roll.dice[0].faces == 20) {
         return;
     }
@@ -433,4 +435,5 @@ Hooks.on("createChatMessage", (message, options, user) =>
             }, time);
         }
     }
+    */
 });
