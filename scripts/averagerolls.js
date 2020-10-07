@@ -58,16 +58,16 @@ function startUp() {
         plantFlag(userid, "sessionNat1", 0);
         plantFlag(userid, "sessionNat20", 0);
         if (typeof bringFlag(userid, "lifetimeAverage") == "undefined") {
-            plantFlag(userid, "lifetimeAverage", []);
+            plantFlag(userid, "lifetimeAverage", 0);
         }
         if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
             plantFlag(userid, "lifetimeRolls", 0);
         }
-        if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
-            plantFlag(userid, "lifetimeRolls", 0);
+        if (typeof bringFlag(userid, "lifetimeNat1") == "undefined") {
+            plantFlag(userid, "lifetimeNat1", 0);
         }
-        if (typeof bringFlag(userid, "lifetimeRolls") == "undefined") {
-            plantFlag(userid, "lifetimeRolls", 0);
+        if (typeof bringFlag(userid, "lifetimeNat20") == "undefined") {
+            plantFlag(userid, "lifetimeNat20", 0);
         }
         console.log("AverageRolls - " + userid + " reset for session.");
     })
@@ -304,7 +304,7 @@ function updateJournal() {
     if (!game.user.isGM) {
         return;
     }
-    
+
     entry = null;
     
     content = "";
