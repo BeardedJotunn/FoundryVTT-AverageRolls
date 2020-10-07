@@ -40,13 +40,16 @@ Hooks.once("init", function () {
 });
 
 Hooks.once("ready", function () { 
-    if (game.settings.get("averagerolls", "Enabled")) {
+    if (game.user.isGM && game.settings.get("averagerolls", "Enabled")) {
         startUp();
     }
 });
 
 // Adding flags for rolls and average to all users
 function startUp() {
+    if (!game.user.isGM) {
+        return;
+    }
     console.log("AverageRolls - Resetting session rolls");
     game.users.entries.forEach(user => {
         userid = user.id;
@@ -74,6 +77,9 @@ function startUp() {
 }
  // Resets all flags
 function resetRolls() {
+    if (!game.user.isGM) {
+        return;
+    }
     console.log("AverageRolls - Resetting all rolls");
     game.users.entries.forEach(user => {
         userid = user.id;
@@ -91,6 +97,9 @@ function resetRolls() {
 
 // Removes all flags
 function cleanUp() {
+    if (!game.user.isGM) {
+        return;
+    }
     console.log("AverageRolls - Cleaning up all users");
     game.users.entries.forEach(user => {
         userid = user.id;
@@ -130,8 +139,12 @@ function unPlantFlag(userid, flag) {
 
 // Output stats for all users as a chat message
 function outputAverages(userid = "") {
-    if (!userid == "") {
-        user = game.users.get(userid);
+    if (!userid == "" || !game.user.isGM) {
+        if (!game.user.isGM) {
+            user = game.user;
+        } else {
+            user = game.users.get(userid);
+        }
         msg = new ChatMessage();
         msg.user = user;
         msg.data.user = userid;
@@ -171,6 +184,7 @@ function outputAverages(userid = "") {
 
         ChatMessage.create(msg);
     } else {
+        
         game.users.entries.forEach(user => {
             userid = user.id;
             msg = new ChatMessage();
@@ -217,6 +231,10 @@ function outputAverages(userid = "") {
 
 // Create a journal entry with stats
 function createJournal() {
+    if (!game.user.isGM) {
+        return;
+    }
+
     gm = "";
     gmFound = false;
     game.users.entries.some(function(user, index) {
@@ -283,6 +301,10 @@ function createJournal() {
 
 // Update the journal entry with stats
 function updateJournal() {
+    if (!game.user.isGM) {
+        return;
+    }
+    
     entry = null;
     
     content = "";
